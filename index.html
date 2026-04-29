@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Plantão de Vendas | Grupo IESA | Dashboard de Performance</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&family=Onest:wght@300;400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root {
+  --bg: #0b1220;
+  --bg-card: #131c2e;
+  --bg-card-2: #1a2440;
+  --border: #243056;
+  --text: #e8edf7;
+  --text-dim: #9aa6c2;
+  --accent: #ffb800;
+  --accent-2: #ff5c5c;
+  --green: #22c55e;
+  --green-dim: #16a34a;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --purple: #a78bfa;
+  --teal: #2dd4bf;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  padding: 24px;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1400px; margin: 0 auto; }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #1a2440 0%, #0f1729 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -10%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255, 184, 0, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+.header-content { flex: 1; min-width: 0; }
+.header-tag {
+  display: inline-block;
+  background: rgba(255, 184, 0, 0.15);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.header h1 {
+  font-family: 'Archivo Black', 'Inter', sans-serif;
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #fff 0%, #ffb800 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.header h2 { font-size: 18px; color: var(--text-dim); font-weight: 500; margin-bottom: 4px; }
+.header-meta { color: var(--text-dim); font-size: 14px; margin-top: 8px; }
+
+/* AGENCY LOGO */
+.agency-logo {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centraliza brand + tagline horizontalmente */
+  gap: 0;
+  color: #fff;
+  line-height: 1;
+}
+.agency-logo .credit {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-bottom: 8px;
+  align-self: center;
+}
+.agency-logo .brand {
+  font-family: 'Onest', 'Manrope', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 46px;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  color: #fff;
+  text-align: center;
+}
+.agency-logo .tagline {
+  font-family: 'Onest', 'Manrope', 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  margin-top: 6px;
+  text-align: center;
+  width: 100%;
+  opacity: 0.92;
+}
+/* Logo oficial em arquivo */
+.agency-logo img.logo-file {
+  display: block;
+  height: 64px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+}
+
+/* SECTIONS */
+.section { margin-bottom: 36px; }
+.section-title {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 22px; font-weight: 800; margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.section-title-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.2), rgba(255, 92, 92, 0.2));
+  border-radius: 10px;
+  font-size: 18px; color: var(--accent);
+}
+.section-subtitle {
+  color: var(--text-dim); font-size: 14px;
+  margin-bottom: 18px; padding-left: 48px;
+}
+
+/* KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.kpi-card.highlight { border-color: var(--accent); border-width: 1.5px; }
+.kpi-card.success { border-color: rgba(34, 197, 94, 0.5); border-width: 1.5px; }
+.kpi-label {
+  font-size: 11px; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+  margin-bottom: 8px;
+}
+.kpi-value { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
+.kpi-value.green { color: var(--green); }
+.kpi-value.accent { color: var(--accent); }
+.kpi-sub { font-size: 12px; color: var(--text-dim); margin-top: 6px; font-weight: 500; }
+.kpi-sub.up { color: var(--green); font-weight: 600; }
+.kpi-sub.down { color: var(--red); font-weight: 600; }
+
+/* GRIDS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+/* CARDS */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+}
+.card-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+.card-subtitle { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; font-weight: 500; }
+
+/* CHART WRAPPERS */
+.chart-wrap { position: relative; height: 380px; }
+.chart-wrap.tall { height: 520px; }
+.chart-wrap.xtall { height: 720px; }
+.chart-wrap.short { height: 260px; }
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; color: var(--text-dim); font-weight: 700;
+     text-transform: uppercase; letter-spacing: 0.05em; font-size: 10.5px;
+     padding: 10px 8px; border-bottom: 1.5px solid var(--border); white-space: nowrap; }
+td { padding: 9px 8px; border-bottom: 1px solid rgba(36, 48, 86, 0.5); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 184, 0, 0.04); }
+.rank { display: inline-block; width: 22px; height: 22px;
+        background: var(--bg-card-2); border-radius: 50%;
+        text-align: center; line-height: 22px; font-size: 11px; font-weight: 800; color: var(--accent); }
+
+/* BADGES */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 12px;
+         font-size: 11px; font-weight: 700; white-space: nowrap; }
+.badge.green { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+.badge.yellow { background: rgba(255, 184, 0, 0.15); color: var(--accent); }
+.badge.red { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+.badge.blue { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+.badge.gray { background: rgba(154, 166, 194, 0.15); color: var(--text-dim); }
+
+/* INSIGHT CARDS */
+.insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.insight-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.insight-card.win { border-left: 3px solid var(--green); }
+.insight-card.gap { border-left: 3px solid var(--red); }
+.insight-card.opp { border-left: 3px solid var(--accent); }
+.insight-tag {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 10px;
+}
+.insight-tag.win { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+.insight-tag.gap { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+.insight-tag.opp { background: rgba(255, 184, 0, 0.15); color: var(--accent); }
+.insight-card h3 { font-size: 15px; margin-bottom: 8px; font-weight: 700; }
+.insight-card p { font-size: 13px; color: var(--text-dim); }
+
+/* CREATIVE PILLS */
+.creative-type-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 700; margin-right: 6px;
+}
+.creative-type-pill.img { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
+.creative-type-pill.video { background: rgba(167, 139, 250, 0.2); color: var(--purple); }
+
+/* REGIONS */
+.region-card {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-2) 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+.region-card h4 { font-size: 13px; margin-bottom: 8px; color: var(--text-dim);
+                  text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+.region-card .pct { font-size: 36px; font-weight: 800; color: var(--accent); line-height: 1; }
+.region-card .desc { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+
+.divider { height: 1px; background: var(--border); margin: 8px 0 16px; }
+
+/* FOOTER */
+.footer-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+}
+.footer-bar .meta { color: var(--text-dim); font-size: 12px; }
+.footer-bar .agency-logo { color: var(--text-dim); }
+.footer-bar .agency-logo .brand { font-size: 32px; line-height: 0.9; }
+.footer-bar .agency-logo .tagline { font-size: 11px; margin-top: 2px; }
+.footer-bar .agency-logo img.logo-file {
+  height: 40px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+}
+
+/* PDF / PRINT STYLES (mantém o tema escuro, otimizado para A4 paisagem) */
+@page {
+  size: A4 landscape;
+  margin: 10mm 8mm;
+}
+
+@media print {
+  /* 1) Força impressão de cores de fundo (Chrome/Edge respeitam exact) */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* 2) Reset de body/container — sem padding extra, deixa @page margin cuidar */
+  html, body {
+    background: var(--bg) !important;
+    color: var(--text) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+  body { font-size: 11.5px; line-height: 1.45; }
+
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* 3) Quebra ZERO pelo meio: blocos atômicos */
+  .header,
+  .card,
+  .kpi-card,
+  .insight-card,
+  .region-card,
+  .chart-wrap,
+  .footer-bar,
+  table,
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid-page !important;
+  }
+
+  /* Grids ficam juntos como uma unidade */
+  .kpi-grid,
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    page-break-inside: avoid !important;
+    break-inside: avoid-page !important;
+  }
+
+  /* Insight grid pode quebrar entre linhas, mas cards individuais não */
+  .insight-grid {
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  /* 4) Sections fluem naturalmente, sem forçar quebra (deixa o conteúdo distribuir) */
+  .section {
+    page-break-inside: auto;
+    break-inside: auto;
+    margin-bottom: 14px !important;
+  }
+
+  /* Page-break só onde realmente faz sentido (sections grandes) */
+  .page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+  .section.page-break:first-of-type {
+    page-break-before: auto !important;
+    break-before: auto !important;
+  }
+
+  /* 5) Títulos nunca ficam órfãos no fim da página */
+  .section-title, .card-title, h1, h2, h3 {
+    page-break-after: avoid !important;
+    break-after: avoid-page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid-page !important;
+  }
+
+  /* 6) HEADER do dashboard */
+  .header { padding: 18px 22px !important; margin-bottom: 14px !important; }
+  .header h1 { font-size: 28px !important; margin-bottom: 4px !important; }
+  .header h2 { font-size: 14px !important; }
+  .header-meta { font-size: 11px !important; margin-top: 6px !important; }
+  .header-tag { font-size: 9.5px !important; padding: 3px 10px !important; margin-bottom: 8px !important; }
+  .agency-logo img.logo-file { height: 50px !important; }
+  .agency-logo .credit { font-size: 8px !important; margin-bottom: 4px !important; }
+
+  /* 7) SEÇÕES — tipografia compacta */
+  .section-title { font-size: 16px !important; margin-bottom: 2px !important; }
+  .section-title-icon { width: 28px !important; height: 28px !important; font-size: 14px !important; }
+  .section-subtitle {
+    font-size: 11px !important;
+    margin-bottom: 10px !important;
+    padding-left: 40px !important;
+  }
+
+  /* 8) KPI CARDS compactos */
+  .kpi-grid { gap: 10px !important; margin-bottom: 10px !important; }
+  .kpi-card { padding: 12px 14px !important; }
+  .kpi-value { font-size: 24px !important; }
+  .kpi-label { font-size: 9.5px !important; margin-bottom: 5px !important; }
+  .kpi-sub { font-size: 10px !important; margin-top: 4px !important; }
+
+  /* 9) CARDS (gráficos e tabelas) */
+  .card { padding: 14px 16px !important; }
+  .card-title { font-size: 14px !important; margin-bottom: 2px !important; }
+  .card-subtitle { font-size: 10.5px !important; margin-bottom: 10px !important; }
+
+  /* 10) GRÁFICOS — alturas otimizadas para caber em A4 paisagem (área ~190mm) */
+  .chart-wrap { height: 260px !important; max-height: 260px !important; }
+  .chart-wrap.short { height: 200px !important; max-height: 200px !important; }
+  .chart-wrap.tall { height: 340px !important; max-height: 340px !important; }
+  .chart-wrap.xtall { height: 460px !important; max-height: 460px !important; }
+  /* canvas dos charts respeita o container */
+  canvas { max-height: 100% !important; }
+
+  /* 11) TABELAS */
+  table { font-size: 10.5px !important; }
+  thead { display: table-header-group; }
+  th { font-size: 9px !important; padding: 6px 6px !important; }
+  td { padding: 5px 6px !important; }
+  .badge { font-size: 9.5px !important; padding: 2px 7px !important; }
+
+  /* 12) INSIGHTS */
+  .insight-grid { gap: 10px !important; }
+  .insight-card { padding: 12px 14px !important; }
+  .insight-card h3 { font-size: 12.5px !important; margin-bottom: 5px !important; }
+  .insight-card p { font-size: 10.5px !important; line-height: 1.5 !important; }
+  .insight-tag { font-size: 8.5px !important; padding: 2px 8px !important; margin-bottom: 6px !important; }
+
+  /* 13) REGION CARDS */
+  .region-card { padding: 14px !important; }
+  .region-card h4 { font-size: 11px !important; margin-bottom: 4px !important; }
+  .region-card .pct { font-size: 28px !important; }
+  .region-card .desc { font-size: 9.5px !important; margin-top: 4px !important; }
+
+  /* 14) FOOTER */
+  .footer-bar {
+    padding: 12px 0 6px !important;
+    margin-top: 12px !important;
+  }
+  .footer-bar .meta { font-size: 10px !important; }
+  .footer-bar .agency-logo img.logo-file { height: 28px !important; }
+
+  /* 15) Garantir que o gradient texts permaneçam (Chrome bug com print) */
+  .header h1 {
+    background: linear-gradient(90deg, #fff 0%, #ffb800 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+
+  /* 16) Evita overflow oculto que esconde conteúdo no print */
+  .header-inner, .header-content { overflow: visible !important; }
+  .section, .card { overflow: visible !important; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-content">
+        <span class="header-tag">Relatório de Performance · Mídia Paga + Influencers</span>
+        <h1>Super Plantão de Vendas</h1>
+        <h2>Grupo IESA · Edição Abril/2026</h2>
+        <div class="header-meta">Período: 10 a 18 de abril de 2026 · 20 marcas · Meta Ads + Creators · Investimento bruto: R$ 50.000</div>
+      </div>
+      <div class="agency-logo">
+        <div class="credit">Relatório por</div>
+        <!-- TROCA AQUI: salve seu logo como "trfgo-logo.png" na mesma pasta deste HTML.
+             Se o arquivo existir, será usado. Se não, mostra a versão tipográfica abaixo. -->
+        <img src="trfgo-logo.png" alt="TRFGO" class="logo-file"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block'; this.nextElementSibling.nextElementSibling.style.display='block';" />
+        <div class="brand" style="display:none;">TRFGO</div>
+        <div class="tagline" style="display:none;">grow through media</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISÃO GERAL -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-title-icon">★</span> Visão geral da ação
+    </div>
+    <div class="section-subtitle">Resultados consolidados versus projeção do plano de mídia</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card success">
+        <div class="kpi-label">Carros vendidos</div>
+        <div class="kpi-value green">887</div>
+        <div class="kpi-sub up">▲ 18,3% acima da meta de 750</div>
+      </div>
+      <div class="kpi-card highlight">
+        <div class="kpi-label">Leads gerados</div>
+        <div class="kpi-value accent">2.735</div>
+        <div class="kpi-sub up">▲ 2,2% acima da projeção (2.675)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Custo por Lead realizado</div>
+        <div class="kpi-value">R$ 11,80</div>
+        <div class="kpi-sub">CPL médio consolidado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Investimento líquido</div>
+        <div class="kpi-value">R$ 43,8K</div>
+        <div class="kpi-sub">R$ 32,8K leads · R$ 11K creators</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Impressões totais</div>
+        <div class="kpi-value">1,96M</div>
+        <div class="kpi-sub">Apenas campanhas de leads</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Cliques</div>
+        <div class="kpi-value">34.733</div>
+        <div class="kpi-sub">CTR médio 1,77%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Engajamento</div>
+        <div class="kpi-value">119K</div>
+        <div class="kpi-sub">Engajamentos com posts</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Frequência média</div>
+        <div class="kpi-value">3,4x</div>
+        <div class="kpi-sub">Saudável para ação curta</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANO VS REALIZADO -->
+  <div class="section page-break">
+    <div class="section-title">
+      <span class="section-title-icon">⇆</span> Plano de mídia vs Realizado
+    </div>
+    <div class="section-subtitle">Comparativo individual por marca: projeções do plano de mídia confrontadas com os resultados entregues</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card success">
+        <div class="kpi-label">Marcas que bateram a meta de leads</div>
+        <div class="kpi-value green">12</div>
+        <div class="kpi-sub up">60% das 20 campanhas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Marcas com CPL melhor que projetado</div>
+        <div class="kpi-value">13</div>
+        <div class="kpi-sub up">65% das campanhas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Atingimento médio de leads</div>
+        <div class="kpi-value accent">102,2%</div>
+        <div class="kpi-sub">Total ação consolidada</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Eficiência média de CPL</div>
+        <div class="kpi-value accent">+4,2%</div>
+        <div class="kpi-sub up">CPL real abaixo do projetado</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 16px;">
+      <div class="card-title">Leads por marca: Projeção vs Realizado</div>
+      <div class="card-subtitle">Barras claras = projeção do plano · Barras escuras = resultado real (verde quando bateu meta · vermelho quando ficou abaixo)</div>
+      <div class="chart-wrap xtall">
+        <canvas id="chartPlanoVsRealLeads"></canvas>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 16px;">
+      <div class="card-title">CPL por marca: Projeção vs Realizado</div>
+      <div class="card-subtitle">Quanto menor o CPL, mais eficiente · Verde = melhor que projetado · Vermelho = acima do projetado</div>
+      <div class="chart-wrap xtall">
+        <canvas id="chartPlanoVsRealCPL"></canvas>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 16px;">
+      <div class="card-title">Tabela completa: atingimento por marca</div>
+      <div class="card-subtitle">Leads realizados, CPL realizado e variação percentual sobre a projeção</div>
+      <div class="divider"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Marca</th>
+            <th style="text-align:right;">Meta vendas</th>
+            <th style="text-align:right;">Leads projetados</th>
+            <th style="text-align:right;">Leads reais</th>
+            <th style="text-align:right;">Atingimento</th>
+            <th style="text-align:right;">CPL projetado</th>
+            <th style="text-align:right;">CPL real</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tablePlanoVsReal"></tbody>
+        <tfoot>
+          <tr style="border-top: 2px solid var(--border); font-weight: 700;">
+            <td><strong>Total geral</strong></td>
+            <td style="text-align:right;"><strong>750</strong></td>
+            <td style="text-align:right;"><strong>2.675</strong></td>
+            <td style="text-align:right;"><strong>2.735</strong></td>
+            <td style="text-align:right;"><span class="badge green">102,2%</span></td>
+            <td style="text-align:right;"><strong>R$ 12,32</strong></td>
+            <td style="text-align:right;"><strong>R$ 11,80</strong></td>
+            <td><span class="badge green">+4,2% eficiência</span></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- CAMPANHAS DE LEADS -->
+  <div class="section page-break">
+    <div class="section-title">
+      <span class="section-title-icon">◆</span> Campanhas de leads por marca
+    </div>
+    <div class="section-subtitle">Análise consolidada de volume e eficiência de custo por marca</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Volume de leads por marca</div>
+        <div class="card-subtitle">Top 5 destacadas em amarelo</div>
+        <div class="chart-wrap tall">
+          <canvas id="chartLeadsByBrand"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Eficiência: CPL por marca</div>
+        <div class="card-subtitle">Verde = abaixo da média (R$ 11,80) · Vermelho = acima de R$ 16</div>
+        <div class="chart-wrap tall">
+          <canvas id="chartCPLByBrand"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 16px;">
+      <div class="card">
+        <div class="card-title">★ Destaques positivos</div>
+        <div class="card-subtitle">Maior volume com melhor custo</div>
+        <div class="divider"></div>
+        <table>
+          <thead><tr><th>#</th><th>Marca</th><th>Leads</th><th>CPL</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rank">1</span></td><td><strong>BYD</strong></td><td>655</td><td>R$ 6,55</td><td><span class="badge green">Top performer</span></td></tr>
+            <tr><td><span class="rank">2</span></td><td><strong>Geely</strong></td><td>396</td><td>R$ 8,22</td><td><span class="badge green">Excelente CPL</span></td></tr>
+            <tr><td><span class="rank">3</span></td><td><strong>GWM</strong></td><td>201</td><td>R$ 10,12</td><td><span class="badge green">Eficiente</span></td></tr>
+            <tr><td><span class="rank">4</span></td><td><strong>IESAshop RS</strong></td><td>206</td><td>R$ 10,56</td><td><span class="badge green">Eficiente</span></td></tr>
+            <tr><td><span class="rank">5</span></td><td><strong>Nissan SC</strong></td><td>77</td><td>R$ 11,03</td><td><span class="badge blue">Bom custo</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">⚠ Pontos de atenção</div>
+        <div class="card-subtitle">CPL acima da média (R$ 11,80)</div>
+        <div class="divider"></div>
+        <table>
+          <thead><tr><th>#</th><th>Marca</th><th>Leads</th><th>CPL</th><th>Variação</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rank">1</span></td><td><strong>Fiat SC</strong></td><td>49</td><td>R$ 32,11</td><td><span class="badge red">+172%</span></td></tr>
+            <tr><td><span class="rank">2</span></td><td><strong>Fiat RS</strong></td><td>120</td><td>R$ 22,80</td><td><span class="badge red">+93%</span></td></tr>
+            <tr><td><span class="rank">3</span></td><td><strong>Jeep</strong></td><td>96</td><td>R$ 20,97</td><td><span class="badge red">+78%</span></td></tr>
+            <tr><td><span class="rank">4</span></td><td><strong>MINI</strong></td><td>41</td><td>R$ 20,71</td><td><span class="badge red">+76%</span></td></tr>
+            <tr><td><span class="rank">5</span></td><td><strong>Renault SC</strong></td><td>45</td><td>R$ 18,87</td><td><span class="badge yellow">+60%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRIATIVOS -->
+  <div class="section page-break">
+    <div class="section-title">
+      <span class="section-title-icon">◉</span> Performance por criativo
+    </div>
+    <div class="section-subtitle">60+ criativos rodaram na ação. Top decile responde por ~60% dos leads</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Top 10 criativos por volume de leads</div>
+        <div class="card-subtitle">Volume absoluto de leads gerados por anúncio</div>
+        <div class="chart-wrap tall">
+          <canvas id="chartTopCreatives"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Melhores CPLs (mín. 20 leads)</div>
+        <div class="card-subtitle">Criativos com maior eficiência de custo</div>
+        <div class="chart-wrap tall">
+          <canvas id="chartBestCPL"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 16px;">
+      <div class="card">
+        <div class="card-title">Imagem vs Vídeo · CPL médio</div>
+        <div class="card-subtitle">Comparativo entre formatos no contexto de leads</div>
+        <div class="chart-wrap">
+          <canvas id="chartFormat"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top performers em destaque</div>
+        <div class="card-subtitle">Criativos vencedores para escalar e replicar</div>
+        <div class="divider"></div>
+        <table>
+          <thead><tr><th>Criativo</th><th>Tipo</th><th>Leads</th><th>CPL</th></tr></thead>
+          <tbody>
+            <tr><td><strong>King</strong></td><td><span class="creative-type-pill img">IMG</span></td><td>212</td><td><span class="badge green">R$ 4,51</span></td></tr>
+            <tr><td><strong>BYD Song Pro 2026</strong></td><td><span class="creative-type-pill video">VÍDEO</span></td><td>397</td><td><span class="badge green">R$ 7,42</span></td></tr>
+            <tr><td><strong>BYD Shark seminovo</strong></td><td><span class="creative-type-pill img">IMG</span></td><td>57</td><td><span class="badge green">R$ 7,79</span></td></tr>
+            <tr><td><strong>EX2 PRO</strong></td><td><span class="creative-type-pill img">IMG</span></td><td>346</td><td><span class="badge green">R$ 8,14</span></td></tr>
+            <tr><td><strong>Song Pro</strong></td><td><span class="creative-type-pill img">IMG</span></td><td>46</td><td><span class="badge green">R$ 8,24</span></td></tr>
+            <tr><td><strong>Kardian</strong></td><td><span class="creative-type-pill img">IMG</span></td><td>76</td><td><span class="badge yellow">R$ 9,55</span></td></tr>
+            <tr><td><strong>Ora 03</strong></td><td><span class="creative-type-pill img">IMG</span></td><td>166</td><td><span class="badge yellow">R$ 9,75</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFLUENCIADORES -->
+  <div class="section page-break">
+    <div class="section-title">
+      <span class="section-title-icon">▶</span> Campanhas com influenciadores
+    </div>
+    <div class="section-subtitle">Estratégia de awareness e consideração. Investimento de R$ 11K em creators</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Investimento creators</div>
+        <div class="kpi-value">R$ 11K</div>
+        <div class="kpi-sub">25% do orçamento total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">ThruPlays totais</div>
+        <div class="kpi-value">158K+</div>
+        <div class="kpi-sub">5 creators ativos</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">VV 75% qualificadas</div>
+        <div class="kpi-value">47K+</div>
+        <div class="kpi-sub">Visualizações com retenção</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">CPM médio (CPM)</div>
+        <div class="kpi-value">R$ 1,60</div>
+        <div class="kpi-sub">Eficiência alta de alcance</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">ThruPlays por creator</div>
+        <div class="card-subtitle">Volume de visualizações completas (≥15s ou completo)</div>
+        <div class="chart-wrap">
+          <canvas id="chartInfluencerThru"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">VV 75%: retenção qualificada</div>
+        <div class="card-subtitle">Quem manteve a audiência até 75% do vídeo</div>
+        <div class="chart-wrap">
+          <canvas id="chartInfluencerVV75"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 16px;">
+      <div class="card">
+        <div class="card-title">Custo por ThruPlay</div>
+        <div class="card-subtitle">Quanto menor, melhor</div>
+        <div class="chart-wrap">
+          <canvas id="chartInfluencerCost"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Ranking consolidado de creators</div>
+        <div class="card-subtitle">Análise por retenção, custo e volume</div>
+        <div class="divider"></div>
+        <table>
+          <thead><tr><th>#</th><th>Creator</th><th>ThruPlays</th><th>VV75%</th><th>Custo/Thru</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rank">1</span></td><td><strong>Lu Kohlmann</strong></td><td>40.219</td><td>11.684</td><td><span class="badge green">R$ 0,043</span></td></tr>
+            <tr><td><span class="rank">2</span></td><td><strong>Guri de Uruguaiana</strong></td><td>33.565</td><td><strong>13.767</strong></td><td><span class="badge green">R$ 0,052</span></td></tr>
+            <tr><td><span class="rank">3</span></td><td><strong>Pedro Ernesto</strong></td><td>32.554</td><td>7.773</td><td><span class="badge green">R$ 0,045</span></td></tr>
+            <tr><td><span class="rank">4</span></td><td><strong>Fernanda Oliveira</strong></td><td>30.557</td><td>5.876</td><td><span class="badge green">R$ 0,050</span></td></tr>
+            <tr><td><span class="rank">5</span></td><td>Institucional</td><td>21.254</td><td>8.056</td><td><span class="badge green">R$ 0,046</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGIÕES -->
+  <div class="section page-break">
+    <div class="section-title">
+      <span class="section-title-icon">◐</span> Distribuição regional
+    </div>
+    <div class="section-subtitle">Estratégia de distribuição geográfica das campanhas de creators</div>
+
+    <div class="grid-4">
+      <div class="region-card">
+        <h4>POA Metropolitana</h4>
+        <div class="pct">50%</div>
+        <div class="desc">Praça principal · maior densidade de leads</div>
+      </div>
+      <div class="region-card">
+        <h4>Interior</h4>
+        <div class="pct">20%</div>
+        <div class="desc">Cobertura estendida no RS</div>
+      </div>
+      <div class="region-card">
+        <h4>Serra</h4>
+        <div class="pct">20%</div>
+        <div class="desc">Bom ticket médio histórico</div>
+      </div>
+      <div class="region-card">
+        <h4>Litoral</h4>
+        <div class="pct">10%</div>
+        <div class="desc">Praça de teste / sazonal</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 16px;">
+      <div class="card-title">Split de orçamento por região</div>
+      <div class="card-subtitle">Concentração em POA Metropolitana com cobertura estendida nas demais regiões</div>
+      <div class="chart-wrap" style="height: 320px;">
+        <canvas id="chartRegions"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="section page-break">
+    <div class="section-title">
+      <span class="section-title-icon">✦</span> Insights, aprendizados e oportunidades
+    </div>
+    <div class="section-subtitle">Aprendizados extraídos dos dados, oportunidades de escala e gaps a endereçar</div>
+
+    <div class="insight-grid">
+      <div class="insight-card win">
+        <span class="insight-tag win">✓ Aprendizado</span>
+        <h3>Plano superado em 12 das 20 marcas</h3>
+        <p>RAM (+258%), Hyundai (+73%), Leapmotor (+56%) e Nissan SC (+51%) entregaram leads muito acima do projetado. Indica que o plano foi conservador para essas frentes. Há espaço para revisar metas nas próximas edições.</p>
+      </div>
+
+      <div class="insight-card win">
+        <span class="insight-tag win">✓ Aprendizado</span>
+        <h3>Criativo direto vence em ação curta</h3>
+        <p>Os 3 melhores CPLs (King R$ 4,51 · BYD Song Pro 2026 R$ 7,42 · BYD Shark R$ 7,79) combinam oferta clara com produto-âncora forte. O Song Pro em vídeo prova que vídeo bem produzido converte tanto quanto estática quando o produto puxa.</p>
+      </div>
+
+      <div class="insight-card win">
+        <span class="insight-tag win">✓ Aprendizado</span>
+        <h3>Volume não cancelou eficiência</h3>
+        <p>Mesmo escalando 20 marcas em paralelo, o CPL consolidado ficou em R$ 11,80, abaixo da projeção de R$ 12,32. Indica boa segmentação e respiro de público entre campanhas.</p>
+      </div>
+
+      <div class="insight-card win">
+        <span class="insight-tag win">✓ Destaque</span>
+        <h3>Creators com retenção real</h3>
+        <p>Lu Kohlmann e Guri de Uruguaiana entregaram custo por ThruPlay abaixo de R$ 0,06 com volumes acima de 30K. Conteúdo natural funcionou melhor que formatos institucionais.</p>
+      </div>
+
+      <div class="insight-card opp">
+        <span class="insight-tag opp">→ Oportunidade</span>
+        <h3>Reaproveitar creators em mídia paga</h3>
+        <p>Pegar os melhores cortes de Lu Kohlmann e Guri (maiores VV75%) e veicular como anúncio nas marcas com pior CPL (Fiat SC, Jeep, MINI) pra puxar performance.</p>
+      </div>
+
+      <div class="insight-card opp">
+        <span class="insight-tag opp">→ Oportunidade</span>
+        <h3>Escalar BYD e Geely</h3>
+        <p>Duas marcas concentraram 38% dos leads (1.051 de 2.735) com CPL abaixo da média. Há espaço claro pra aumentar verba marginal nessas frentes em ações futuras.</p>
+      </div>
+
+      <div class="insight-card opp">
+        <span class="insight-tag opp">→ Oportunidade</span>
+        <h3>Diagnóstico das marcas com CPL alto</h3>
+        <p>Fiat SC, Fiat RS, Jeep e MINI tiveram CPLs 76-172% acima da média e abaixo da projeção. Vale revisitar criativo, oferta da campanha e segmentação antes da próxima edição.</p>
+      </div>
+
+      <div class="insight-card gap">
+        <span class="insight-tag gap">! Gap crítico</span>
+        <h3>Ausência de tracking de fundo de funil</h3>
+        <p>Não temos visibilidade sobre quantos dos 2.735 leads viraram visita à loja, test drive ou venda. Isso é o principal gap pra evoluir a leitura de ROI real da ação.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONCLUSÃO -->
+  <div class="section">
+    <div class="card" style="background: linear-gradient(135deg, rgba(255, 184, 0, 0.08), rgba(255, 92, 92, 0.05));">
+      <div class="card-title" style="font-size: 18px;">Conclusão geral</div>
+      <div class="divider"></div>
+      <p style="font-size: 14px; line-height: 1.7; color: var(--text);">
+        A ação <strong>Super Plantão de Vendas</strong> entregou <strong style="color: var(--green);">887 carros (118% da meta)</strong>
+        e o tráfego pago cumpriu plenamente seu papel: gerar demanda em escala com eficiência de custo.
+        Foram <strong style="color: var(--accent);">2.735 leads (102,2% da projeção)</strong> a um CPL consolidado de
+        <strong>R$ 11,80</strong>, abaixo da meta projetada de R$ 12,32. Em 12 das 20 marcas, o resultado de leads
+        ficou acima da projeção do plano de mídia. Influenciadores reforçaram alcance e consideração com retenção
+        real, especialmente <strong>Lu Kohlmann</strong> e <strong>Guri de Uruguaiana</strong>. O principal limitador
+        para próximas edições é a <strong style="color: var(--red);">ausência de tracking de qualidade dos leads</strong>.
+        Fechar essa lacuna desbloqueia leituras de ROI por marca, criativo e creator, e permite decisões de alocação
+        muito mais precisas nas próximas edições do Plantão.
+      </p>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <div class="meta">Dashboard Super Plantão de Vendas · Grupo IESA · Abril 2026</div>
+    <div class="agency-logo footer-logo">
+      <img src="trfgo-logo.png" alt="TRFGO" class="logo-file"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='block'; this.nextElementSibling.nextElementSibling.style.display='block';" />
+      <div class="brand" style="display:none;">TRFGO</div>
+      <div class="tagline" style="display:none;">grow through media</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Chart.js global config
+Chart.register(ChartDataLabels);
+Chart.defaults.color = '#9aa6c2';
+Chart.defaults.borderColor = '#243056';
+Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.plugins.datalabels.display = true;
+
+const palette = {
+  accent: '#ffb800',
+  accent2: '#ff5c5c',
+  blue: '#3b82f6',
+  green: '#22c55e',
+  red: '#ef4444',
+  purple: '#a78bfa',
+  teal: '#2dd4bf',
+};
+
+// =====================
+// PLANO VS REALIZADO
+// =====================
+const planoData = [
+  // [marca, leads_proj, leads_real, cpl_proj, cpl_real, vendas_meta]
+  ['BYD',          513, 655,  8.70,  6.55, 150],
+  ['Geely',        450, 396,  7.25,  8.22, 100],
+  ['IESAshop RS',  267, 206,  8.15, 10.56,  55],
+  ['Renault RS',   182, 204, 12.60, 11.19,  60],
+  ['GWM',          155, 201, 13.30, 10.12,  50],
+  ['Fiat RS',      178, 120, 16.30, 22.80,  85],
+  ['BMW Motorrad', 144, 105,  9.25, 12.38,  20],
+  ['Nissan RS',    140, 103, 13.00, 17.03,  40],
+  ['Jeep',          75,  96, 27.50, 20.97,  50],
+  ['BMW',           73,  85, 18.30, 15.10,  20],
+  ['Nissan SC',     51,  77, 16.70, 11.03,  10],
+  ['RAM',           19,  67, 45.80, 12.68,  15],
+  ['Volvo',         65,  65, 13.10, 13.07,  15],
+  ['Leapmotor',     39,  61, 22.10, 13.93,  15],
+  ['Harley',        84,  60, 10.15, 14.16,   7],
+  ['Hyundai',       30,  52, 28.55, 15.16,  10],
+  ['Fiat SC',       56,  49, 28.20, 32.11,  30],
+  ['IESAshop SC',   79,  47, 10.80, 18.07,   5],
+  ['Renault SC',    33,  45, 26.00, 18.87,   8],
+  ['MINI',          44,  41, 19.45, 20.71,   5],
+];
+
+// Sort by realized leads desc for visual clarity
+const planoSorted = [...planoData].sort((a, b) => b[2] - a[2]);
+
+// Render comparison table
+const tbody = document.getElementById('tablePlanoVsReal');
+planoSorted.forEach(([marca, lProj, lReal, cplProj, cplReal, vendas]) => {
+  const ating = ((lReal / lProj) * 100);
+  const cplDelta = ((cplReal - cplProj) / cplProj) * 100;
+  const atingBadge = ating >= 100 ? 'green' : (ating >= 85 ? 'yellow' : 'red');
+  const status = (ating >= 100 && cplDelta <= 0) ? '<span class="badge green">★ Superou</span>'
+              : (ating >= 100) ? '<span class="badge green">✓ Bateu meta</span>'
+              : (ating >= 85) ? '<span class="badge yellow">~ Próximo</span>'
+              : '<span class="badge red">↓ Abaixo</span>';
+  tbody.innerHTML += `
+    <tr>
+      <td><strong>${marca}</strong></td>
+      <td style="text-align:right;">${vendas}</td>
+      <td style="text-align:right;">${lProj}</td>
+      <td style="text-align:right;"><strong>${lReal}</strong></td>
+      <td style="text-align:right;"><span class="badge ${atingBadge}">${ating.toFixed(0)}%</span></td>
+      <td style="text-align:right;">R$ ${cplProj.toFixed(2).replace('.', ',')}</td>
+      <td style="text-align:right;"><strong>R$ ${cplReal.toFixed(2).replace('.', ',')}</strong></td>
+      <td>${status}</td>
+    </tr>
+  `;
+});
+
+// Chart: Plano vs Real - LEADS
+new Chart(document.getElementById('chartPlanoVsRealLeads'), {
+  type: 'bar',
+  data: {
+    labels: planoSorted.map(d => d[0]),
+    datasets: [
+      {
+        label: 'Projeção do plano',
+        data: planoSorted.map(d => d[1]),
+        backgroundColor: 'rgba(154, 166, 194, 0.4)',
+        borderColor: '#9aa6c2',
+        borderWidth: 1,
+        borderRadius: 3,
+        datalabels: {
+          color: '#9aa6c2',
+          anchor: 'end', align: 'end',
+          font: { size: 10, weight: '600' },
+          formatter: v => v,
+        },
+      },
+      {
+        label: 'Resultado real',
+        data: planoSorted.map(d => d[2]),
+        backgroundColor: planoSorted.map(d => d[2] >= d[1] ? palette.green : palette.red),
+        borderRadius: 3,
+        datalabels: {
+          color: '#fff',
+          anchor: 'end', align: 'end',
+          font: { size: 11, weight: 'bold' },
+          formatter: v => v,
+        },
+      },
+    ],
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 70 } },
+    plugins: {
+      legend: { position: 'top', labels: { padding: 16, font: { size: 12, weight: '600' } } },
+    },
+    scales: {
+      x: { grid: { color: 'rgba(36, 48, 86, 0.5)' }, ticks: { font: { size: 11 } } },
+      y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } },
+    },
+  },
+});
+
+// Chart: Plano vs Real - CPL
+new Chart(document.getElementById('chartPlanoVsRealCPL'), {
+  type: 'bar',
+  data: {
+    labels: planoSorted.map(d => d[0]),
+    datasets: [
+      {
+        label: 'CPL projetado',
+        data: planoSorted.map(d => d[3]),
+        backgroundColor: 'rgba(154, 166, 194, 0.4)',
+        borderColor: '#9aa6c2',
+        borderWidth: 1,
+        borderRadius: 3,
+        datalabels: {
+          color: '#9aa6c2',
+          anchor: 'end', align: 'end',
+          font: { size: 10, weight: '600' },
+          formatter: v => 'R$ ' + v.toFixed(2).replace('.', ','),
+        },
+      },
+      {
+        label: 'CPL real',
+        data: planoSorted.map(d => d[4]),
+        backgroundColor: planoSorted.map(d => d[4] <= d[3] ? palette.green : palette.red),
+        borderRadius: 3,
+        datalabels: {
+          color: '#fff',
+          anchor: 'end', align: 'end',
+          font: { size: 11, weight: 'bold' },
+          formatter: v => 'R$ ' + v.toFixed(2).replace('.', ','),
+        },
+      },
+    ],
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 90 } },
+    plugins: {
+      legend: { position: 'top', labels: { padding: 16, font: { size: 12, weight: '600' } } },
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(36, 48, 86, 0.5)' },
+        ticks: { font: { size: 11 }, callback: v => 'R$ ' + v },
+      },
+      y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } },
+    },
+  },
+});
+
+// =====================
+// LEADS POR MARCA
+// =====================
+const brandLeads = [
+  ['BYD', 655, 6.55],
+  ['Geely', 396, 8.22],
+  ['IESAshop RS', 206, 10.56],
+  ['Renault RS', 204, 11.19],
+  ['GWM', 201, 10.12],
+  ['Fiat RS', 120, 22.80],
+  ['BMW Motorrad', 105, 12.38],
+  ['Nissan RS', 103, 17.03],
+  ['Jeep', 96, 20.97],
+  ['BMW', 85, 15.10],
+  ['Nissan SC', 77, 11.03],
+  ['RAM', 67, 12.68],
+  ['Volvo', 65, 13.07],
+  ['Leapmotor', 61, 13.93],
+  ['Harley', 60, 14.16],
+  ['Hyundai', 52, 15.16],
+  ['Fiat SC', 49, 32.11],
+  ['IESAshop SC', 47, 18.07],
+  ['Renault SC', 45, 18.87],
+  ['MINI', 41, 20.71],
+];
+
+const labelsBrands = brandLeads.map(b => b[0]);
+const valuesLeads = brandLeads.map(b => b[1]);
+
+new Chart(document.getElementById('chartLeadsByBrand'), {
+  type: 'bar',
+  data: {
+    labels: labelsBrands,
+    datasets: [{
+      label: 'Leads',
+      data: valuesLeads,
+      backgroundColor: valuesLeads.map((v, i) => i < 5 ? palette.accent : palette.blue),
+      borderRadius: 4,
+    }],
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 60 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end', align: 'end',
+        color: '#e8edf7',
+        font: { weight: 'bold', size: 11 },
+        formatter: v => v,
+      },
+    },
+    scales: {
+      x: { grid: { color: 'rgba(36, 48, 86, 0.5)' } },
+      y: { grid: { display: false }, ticks: { font: { weight: '600' } } },
+    },
+  },
+});
+
+const sortedByCPL = [...brandLeads].sort((a, b) => a[2] - b[2]);
+new Chart(document.getElementById('chartCPLByBrand'), {
+  type: 'bar',
+  data: {
+    labels: sortedByCPL.map(b => b[0]),
+    datasets: [{
+      label: 'CPL (R$)',
+      data: sortedByCPL.map(b => b[2]),
+      backgroundColor: sortedByCPL.map(b => b[2] <= 11.80 ? palette.green : (b[2] <= 16 ? palette.accent : palette.red)),
+      borderRadius: 4,
+    }],
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 80 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end', align: 'end',
+        color: '#e8edf7',
+        font: { weight: 'bold', size: 11 },
+        formatter: v => 'R$ ' + v.toFixed(2).replace('.', ','),
+      },
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(36, 48, 86, 0.5)' },
+        ticks: { callback: v => 'R$ ' + v },
+      },
+      y: { grid: { display: false }, ticks: { font: { weight: '600' } } },
+    },
+  },
+});
+
+// =====================
+// TOP CRIATIVOS
+// =====================
+const topCreatives = [
+  ['BYD Song Pro 2026', 397],
+  ['EX2 PRO', 346],
+  ['King', 212],
+  ['Ora 03', 166],
+  ['GWM Haval H6 RS', 143],
+  ['Kwid', 112],
+  ['R 1300 GS', 81],
+  ['Kardian', 76],
+  ['Chamada Vídeo', 73],
+  ['EX30', 61],
+];
+
+new Chart(document.getElementById('chartTopCreatives'), {
+  type: 'bar',
+  data: {
+    labels: topCreatives.map(c => c[0]),
+    datasets: [{
+      label: 'Leads',
+      data: topCreatives.map(c => c[1]),
+      backgroundColor: palette.accent,
+      borderRadius: 4,
+    }],
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 60 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end', align: 'end',
+        color: '#e8edf7',
+        font: { weight: 'bold', size: 11 },
+        formatter: v => v,
+      },
+    },
+    scales: {
+      x: { grid: { color: 'rgba(36, 48, 86, 0.5)' } },
+      y: { grid: { display: false }, ticks: { font: { weight: '600' } } },
+    },
+  },
+});
+
+const bestCPL = [
+  ['King', 4.51],
+  ['BYD Song Pro 2026', 7.42],
+  ['BYD Shark', 7.79],
+  ['EX2 PRO', 8.14],
+  ['Song Pro', 8.24],
+  ['Chamada Vídeo (var)', 8.51],
+  ['Kardian', 9.55],
+  ['Ora 03', 9.75],
+  ['Chamada Vídeo (var2)', 10.33],
+  ['Kait Advance', 11.40],
+];
+
+new Chart(document.getElementById('chartBestCPL'), {
+  type: 'bar',
+  data: {
+    labels: bestCPL.map(c => c[0]),
+    datasets: [{
+      label: 'CPL (R$)',
+      data: bestCPL.map(c => c[1]),
+      backgroundColor: palette.green,
+      borderRadius: 4,
+    }],
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 80 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end', align: 'end',
+        color: '#e8edf7',
+        font: { weight: 'bold', size: 11 },
+        formatter: v => 'R$ ' + v.toFixed(2).replace('.', ','),
+      },
+    },
+    scales: {
+      x: { grid: { color: 'rgba(36, 48, 86, 0.5)' }, ticks: { callback: v => 'R$ ' + v } },
+      y: { grid: { display: false }, ticks: { font: { weight: '600' } } },
+    },
+  },
+});
+
+// IMG vs VIDEO
+new Chart(document.getElementById('chartFormat'), {
+  type: 'bar',
+  data: {
+    labels: ['Imagem (estática)', 'Vídeo'],
+    datasets: [{
+      label: 'CPL médio (R$)',
+      data: [11.20, 17.90],
+      backgroundColor: [palette.blue, palette.purple],
+      borderRadius: 6,
+    }],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { top: 24 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end', align: 'top',
+        color: '#e8edf7',
+        font: { weight: 'bold', size: 16 },
+        formatter: v => 'R$ ' + v.toFixed(2).replace('.', ','),
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true, max: 22,
+        grid: { color: 'rgba(36, 48, 86, 0.5)' },
+        ticks: { callback: v => 'R$ ' + v },
+      },
+      x: { grid: { display: false }, ticks: { font: { weight: '700', size: 13 } } },
+    },
+  },
+});
+
+// =====================
+// INFLUENCERS
+// =====================
+const influencers = [
+  ['Lu Kohlmann', 40219, 11684, 0.0432],
+  ['Guri de Uruguaiana', 33565, 13767, 0.0520],
+  ['Pedro Ernesto', 32554, 7773, 0.0451],
+  ['Fernanda Oliveira', 30557, 5876, 0.0496],
+  ['Institucional', 21254, 8056, 0.0460],
+];
+
+new Chart(document.getElementById('chartInfluencerThru'), {
+  type: 'bar',
+  data: {
+    labels: influencers.map(i => i[0]),
+    datasets: [{
+      label: 'ThruPlays',
+      data: influencers.map(i => i[1]),
+      backgroundColor: [palette.accent, palette.green, palette.blue, palette.purple, palette.teal],
+      borderRadius: 6,
+    }],
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    layout: { padding: { top: 28 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end', align: 'top',
+        color: '#e8edf7',
+        font: { weight: 'bold', size: 12 },
+        formatter: v => v.toLocaleString('pt-BR'),
+      },
+    },
+    scales: {
+      y: { grid: { color: 'rgba(36, 48, 86, 0.5)' }, ticks: { callback: v => (v/1000) + 'K' } },
+      x: { grid: { display: false }, ticks: { font: { weight: '600', size: 11 } } },
+    },
+  },
+});
+
+new Chart(document.getElementById('chartInfluencerVV75'), {
+  type: 'bar',
+  data: {
+    labels: influencers.map(i => i[0]),
+    datasets: [{
+      label: 'VV 75%',
+      data: influencers.map(i => i[2]),
+      backgroundColor: palette.green,
+      borderRadius: 6,
+    }],
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    layout: { padding: { top: 28 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end', align: 'top',
+        color: '#e8edf7',
+        font: { weight: 'bold', size: 12 },
+        formatter: v => v.toLocaleString('pt-BR'),
+      },
+    },
+    scales: {
+      y: { grid: { color: 'rgba(36, 48, 86, 0.5)' }, ticks: { callback: v => (v/1000) + 'K' } },
+      x: { grid: { display: false }, ticks: { font: { weight: '600', size: 11 } } },
+    },
+  },
+});
+
+new Chart(document.getElementById('chartInfluencerCost'), {
+  type: 'bar',
+  data: {
+    labels: influencers.map(i => i[0]),
+    datasets: [{
+      label: 'Custo / ThruPlay',
+      data: influencers.map(i => i[3]),
+      backgroundColor: influencers.map(i => i[3] <= 0.046 ? palette.green : palette.accent),
+      borderRadius: 6,
+    }],
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    layout: { padding: { top: 28 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end', align: 'top',
+        color: '#e8edf7',
+        font: { weight: 'bold', size: 12 },
+        formatter: v => 'R$ ' + v.toFixed(4).replace('.', ','),
+      },
+    },
+    scales: {
+      y: { grid: { color: 'rgba(36, 48, 86, 0.5)' }, ticks: { callback: v => 'R$ ' + v.toFixed(3) } },
+      x: { grid: { display: false }, ticks: { font: { weight: '600', size: 11 } } },
+    },
+  },
+});
+
+// REGIÕES
+new Chart(document.getElementById('chartRegions'), {
+  type: 'doughnut',
+  data: {
+    labels: ['POA Metropolitana', 'Interior', 'Serra', 'Litoral'],
+    datasets: [{
+      data: [50, 20, 20, 10],
+      backgroundColor: [palette.accent, palette.blue, palette.green, palette.purple],
+      borderColor: '#131c2e',
+      borderWidth: 3,
+    }],
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          padding: 18,
+          font: { size: 14, weight: '600' },
+          generateLabels: function(chart) {
+            const data = chart.data;
+            return data.labels.map((label, i) => ({
+              text: `${label}: ${data.datasets[0].data[i]}%`,
+              fillStyle: data.datasets[0].backgroundColor[i],
+              strokeStyle: data.datasets[0].backgroundColor[i],
+              fontColor: '#e8edf7',
+              index: i,
+            }));
+          },
+        },
+      },
+      datalabels: {
+        color: '#fff',
+        font: { weight: 'bold', size: 18 },
+        formatter: v => v + '%',
+      },
+    },
+  },
+});
+</script>
+</body>
+</html>
